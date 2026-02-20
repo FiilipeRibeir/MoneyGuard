@@ -3,6 +3,7 @@ import 'package:intl/intl.dart'; // Para formatar moeda e data
 import 'package:moneyguard/domain/entities/transaction.dart';
 import 'package:moneyguard/presentation/widgets/add_transaction_form.dart';
 import 'package:moneyguard/presentation/widgets/category_chart.dart';
+import 'package:moneyguard/presentation/widgets/month_selector.dart';
 import 'package:provider/provider.dart';
 import '../providers/transaction_provider.dart';
 
@@ -13,13 +14,6 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<TransactionProvider>();
     final currencyFormat = NumberFormat.simpleCurrency(locale: 'pt_BR');
-    final txs = provider.filteredTransactions;
-
-    final filteredTotal = txs.fold<double>(0, (sum, tx) {
-      return tx.type == TransactionType.income
-          ? sum + tx.amount
-          : sum - tx.amount;
-    });
 
     return Scaffold(
       appBar: AppBar(
@@ -44,7 +38,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 const Text('Saldo Atual'),
                 Text(
-                  currencyFormat.format(filteredTotal),
+                  currencyFormat.format(provider.filteredTotal),
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -80,51 +74,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          // Exemplo de como construir o seletor
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 12, // Vamos mostrar os meses do ano atual
-              itemBuilder: (context, index) {
-                final monthDate = DateTime(
-                  provider.selectedDate.year,
-                  index + 1,
-                );
-                final isSelected =
-                    monthDate.month == provider.selectedDate.month;
-
-                return GestureDetector(
-                  onTap: () => provider.changeMonth(monthDate),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: isSelected
-                          ? Border(
-                              bottom: BorderSide(
-                                color: Theme.of(context).colorScheme.primary,
-                                width: 2,
-                              ),
-                            )
-                          : null,
-                    ),
-                    child: Text(
-                      DateFormat('MMM').format(monthDate).toUpperCase(),
-                      style: TextStyle(
-                        fontWeight: isSelected
-                            ? FontWeight.bold
-                            : FontWeight.normal,
-                        color: isSelected
-                            ? Theme.of(context).colorScheme.primary
-                            : Colors.grey,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
+          MonthSelector(),
           const CategoryChart(),
           // Lista de Transações
           Expanded(

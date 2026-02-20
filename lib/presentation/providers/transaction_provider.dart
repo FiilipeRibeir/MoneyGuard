@@ -44,6 +44,14 @@ class TransactionProvider extends ChangeNotifier {
         .toList();
   }
 
+  double get filteredTotal {
+    return filteredTransactions.fold<double>(0, (sum, tx) {
+      return tx.type == TransactionType.income
+          ? sum + tx.amount
+          : sum - tx.amount;
+    });
+  }
+
   // Derivação por categoria (ainda é “lógica”, não banco)
   List<TransactionEntity> transactionsByCategory(String category) {
     final result = filteredTransactions
