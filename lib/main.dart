@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:moneyguard/data/models/transaction_model.dart';
+import 'package:moneyguard/presentation/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'presentation/providers/transaction_provider.dart';
-import 'presentation/screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +36,7 @@ class MoneyGuardApp extends StatelessWidget {
         colorSchemeSeed: Colors.green,
         brightness: Brightness.light,
       ),
-      home: HomeScreen(),
+      home: MainScreen(),
     );
   }
 }

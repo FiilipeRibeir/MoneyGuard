@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import '../../domain/entities/transaction.dart';
-import '../providers/transaction_provider.dart';
+import '../../../domain/entities/transaction.dart';
+import '../../providers/transaction_provider.dart';
 
 class AddTransactionForm extends StatefulWidget {
   const AddTransactionForm({super.key});
