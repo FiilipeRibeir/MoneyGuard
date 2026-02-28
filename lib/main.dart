@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:moneyguard/data/models/transaction_model.dart';
+import 'package:moneyguard/presentation/providers/investment_provider.dart';
 import 'package:moneyguard/presentation/screens/main_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +18,7 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => TransactionProvider()..loadTransactions(),
         ),
+        ChangeNotifierProvider(create: (_) => InvestmentProvider()),
       ],
       child: const MoneyGuardApp(),
     ),
