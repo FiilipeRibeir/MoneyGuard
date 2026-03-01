@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:moneyguard/data/models/investment_model.dart';
 import 'package:moneyguard/data/models/transaction_model.dart';
 import 'package:moneyguard/presentation/providers/investment_provider.dart';
 import 'package:moneyguard/presentation/screens/main_screen.dart';
@@ -11,6 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(TransactionModelAdapter());
+  Hive.registerAdapter(InvestmentModelAdapter());
 
   runApp(
     MultiProvider(
@@ -18,7 +20,9 @@ void main() async {
         ChangeNotifierProvider(
           create: (_) => TransactionProvider()..loadTransactions(),
         ),
-        ChangeNotifierProvider(create: (_) => InvestmentProvider()),
+        ChangeNotifierProvider(
+          create: (_) => InvestmentProvider()..loadInvestments(),
+        ),
       ],
       child: const MoneyGuardApp(),
     ),

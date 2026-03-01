@@ -1,42 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:moneyguard/data/repositories/investment_repository.dart';
 import 'package:moneyguard/domain/entities/investment.dart';
 
 class InvestmentProvider extends ChangeNotifier {
+  // Dependência (acesso ao banco via repositório)
+  final InvestmentRepository _repository = InvestmentRepository();
+
   //--------------------------------------------------------------------
 
   // Estado do Provider
 
   //--------------------------------------------------------------------
 
-  List<InvestmentEntity> _investments = [
-    InvestmentEntity(
-      id: '1',
-      symbol: 'VALE3',
-      quantity: 100,
-      averagePrice: 70.0,
-      currentPrice: 75.50, // Lucro
-      name: "Vale", // Exemplo de nome
-      type: AssetType.acao, // Exemplo de tipo de ativo
-    ),
-    InvestmentEntity(
-      id: '2',
-      symbol: 'PETR4',
-      quantity: 50,
-      averagePrice: 40.0,
-      currentPrice: 38.20, // Prejuízo
-      name: "Petrobras", // Exemplo de nome
-      type: AssetType.acao, // Exemplo de tipo de ativo
-    ),
-    InvestmentEntity(
-      id: '3',
-      symbol: 'ITUB4',
-      quantity: 200,
-      averagePrice: 25.0,
-      currentPrice: 32.0,
-      name: "Banco Itaú", // Exemplo de nome
-      type: AssetType.acao, // Lucro alto
-    ),
-  ];
+  List<InvestmentEntity> _investments = [];
   bool _isLoading = false;
 
   //--------------------------------------------------------------------
@@ -62,7 +38,73 @@ class InvestmentProvider extends ChangeNotifier {
 
   //--------------------------------------------------------------------
 
+  // Lógica de negócios (métodos para manipular o estado)
+
+  //--------------------------------------------------------------------
+
+  String getAssetTypeName(AssetType type) {
+    switch (type) {
+      case AssetType.acao:
+        return 'Ações';
+      case AssetType.fii:
+        return 'Fundos Imobiliários';
+      case AssetType.stock:
+        return 'Stocks';
+      case AssetType.cripto:
+        return 'Criptomoedas';
+      case AssetType.etf:
+        return 'ETFs';
+      case AssetType.rendaFixa:
+        return 'Renda Fixa';
+    }
+  }
+
+  IconData getAssetTypeIcon(AssetType type) {
+    switch (type) {
+      case AssetType.acao:
+        return Icons.show_chart;
+      case AssetType.fii:
+        return Icons.apartment;
+      case AssetType.stock:
+        return Icons.trending_up;
+      case AssetType.cripto:
+        return Icons.currency_bitcoin;
+      case AssetType.etf:
+        return Icons.pie_chart;
+      case AssetType.rendaFixa:
+        return Icons.account_balance;
+    }
+  }
+
+  //--------------------------------------------------------------------
+
   // Banco de dados (repositório)
 
   //--------------------------------------------------------------------
+
+  //carregar investimentos do banco de dados
+  Future<void> loadInvestments() async {
+    _setLoading(true);
+    _investments = await _repository.getAllInvestments();
+    _setLoading(false);
+  }
+
+  //adicionar investimento
+  Future<void> addInvestment(InvestmentEntity investment) async {
+    _setLoading(true);
+    await _repository.addInvestment(investment);
+    await loadInvestments();
+  }
+
+  //deletar investimento
+  Future<void> deleteInvestment(String id) async {
+    _setLoading(true);
+    await _repository.deleteInvestment(id);
+    await loadInvestments();
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
 }

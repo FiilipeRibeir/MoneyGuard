@@ -145,7 +145,7 @@ class HomeScreen extends StatelessWidget {
         const Positioned(
           right: 16,
           bottom: 16,
-          child: CustomFloatingActionButton(),
+          child: CustomFloatingActionButton(isInvestment: false),
         ),
       ],
     );

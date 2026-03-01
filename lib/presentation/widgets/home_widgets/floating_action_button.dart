@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:moneyguard/presentation/widgets/home_widgets/add_transaction_form.dart';
+import 'package:moneyguard/presentation/widgets/investment_widgets/investment_widfgets.dart';
 
 class CustomFloatingActionButton extends StatelessWidget {
-  const CustomFloatingActionButton({super.key});
+  final bool isInvestment;
+
+  const CustomFloatingActionButton({super.key, required this.isInvestment});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,9 @@ class CustomFloatingActionButton extends StatelessWidget {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
           ),
-          builder: (_) => const AddTransactionForm(),
+          builder: (_) => isInvestment
+              ? const AddInvestmentForm()
+              : const AddTransactionForm(),
         );
       },
       label: const Text('Novo'),

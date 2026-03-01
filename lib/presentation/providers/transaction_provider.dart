@@ -3,7 +3,6 @@ import '../../domain/entities/transaction.dart';
 import '../../data/repositories/transaction_repository.dart';
 
 class TransactionProvider extends ChangeNotifier {
-  // Dependência (acesso ao banco via repositório)
   final TransactionRepository _repository = TransactionRepository();
 
   //--------------------------------------------------------------------
@@ -114,7 +113,6 @@ class TransactionProvider extends ChangeNotifier {
 
   //--------------------------------------------------------------------
 
-  // Dica de Sênior: Crie funções simples para navegar
   void nextYear() {
     _selectedDate = DateTime(_selectedDate.year + 1, _selectedDate.month);
     notifyListeners();
