@@ -28,15 +28,15 @@ class InvestmentScreen extends StatelessWidget {
                 children: [
                   const Text('Total Investido'),
                   Text(
-                    'R\$ 0,00',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    'R\$ ${provider.investments.fold(0.0, (sum, inv) => sum + inv.totalInvested).toStringAsFixed(2)}',
+                    style: const TextStyle(
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
                   ),
-                  const Text(
-                    'Variação Anual: +0,00%',
-                    style: TextStyle(fontSize: 16, color: Colors.green),
+                  Text(
+                    'Variação Anual: ${provider.totalProfitability.toStringAsFixed(2)}%',
+                    style: const TextStyle(fontSize: 16, color: Colors.black),
                   ),
                 ],
               ),
@@ -45,17 +45,31 @@ class InvestmentScreen extends StatelessWidget {
               child: Column(
                 children: [
                   //Meus Ativos
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
+                        const Text(
                           'Meus Ativos',
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: provider.isLoading
+                              ? null
+                              : () {
+                                  context
+                                      .read<InvestmentProvider>()
+                                      .importInvestments();
+                                },
+                          icon: const Icon(Icons.sync),
+                          label: const Text('Sincronizar'),
                         ),
                       ],
                     ),

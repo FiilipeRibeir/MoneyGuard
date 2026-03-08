@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moneyguard/data/repositories/investment_repository.dart';
+import 'package:moneyguard/data/services/bank_integration_service.dart';
 import 'package:moneyguard/domain/entities/investment.dart';
 
 class InvestmentProvider extends ChangeNotifier {
@@ -23,6 +24,12 @@ class InvestmentProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
   List<InvestmentEntity> get investments => _investments;
+  double get totalProfitability =>
+      _investments.fold(
+        0.0,
+        (sum, investment) => sum + investment.profitability,
+      ) /
+      _investments.length;
 
   Map<AssetType, List<InvestmentEntity>> get groupedInvestments {
     Map<AssetType, List<InvestmentEntity>> groups = {};
@@ -101,6 +108,23 @@ class InvestmentProvider extends ChangeNotifier {
     _setLoading(true);
     await _repository.deleteInvestment(id);
     await loadInvestments();
+  }
+
+  Future<void> importInvestments() async {
+    _setLoading(true);
+
+    try {
+      final externalInvestments =
+          await BankIntegrationService.fetchExternalData();
+
+      for (final investment in externalInvestments) {
+        await _repository.addInvestment(investment);
+      }
+
+      _investments = await _repository.getAllInvestments();
+    } finally {
+      _setLoading(false);
+    }
   }
 
   void _setLoading(bool value) {
