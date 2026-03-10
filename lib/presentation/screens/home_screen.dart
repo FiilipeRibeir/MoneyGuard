@@ -67,6 +67,17 @@ class HomeScreen extends StatelessWidget {
                   icon: const Icon(Icons.today),
                   onPressed: () => provider.changeMonth(DateTime.now()),
                 ),
+                OutlinedButton.icon(
+                  onPressed: provider.isLoading
+                      ? null
+                      : () {
+                          context
+                              .read<TransactionProvider>()
+                              .importTransactionsFromBank();
+                        },
+                  icon: const Icon(Icons.sync),
+                  label: const Text('Sincronizar'),
+                ),
               ],
             ),
 

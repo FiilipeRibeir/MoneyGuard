@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moneyguard/data/repositories/investment_repository.dart';
-import 'package:moneyguard/data/services/bank_integration_service.dart';
+import 'package:moneyguard/data/services/bank_investment_service.dart';
 import 'package:moneyguard/domain/entities/investment.dart';
 
 class InvestmentProvider extends ChangeNotifier {

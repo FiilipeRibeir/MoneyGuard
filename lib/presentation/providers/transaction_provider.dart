@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:moneyguard/data/services/bank_transaction_service.dart';
 import '../../domain/entities/transaction.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -152,6 +153,24 @@ class TransactionProvider extends ChangeNotifier {
   Future<void> deleteTransaction(String id) async {
     await _repository.deleteTransaction(id);
     await loadTransactions();
+  }
+
+  Future<void> importTransactionsFromBank() async {
+    _setLoading(true);
+    try {
+      final externalTransactions =
+          await BankTransactionService.fetchExternalTransactions();
+
+      for (var tx in externalTransactions) {
+        await _repository.addTransaction(tx);
+      }
+
+      await loadTransactions();
+    } catch (e) {
+      // Tratar erros de importação, se necessário
+    } finally {
+      _setLoading(false);
+    }
   }
 
   void _setLoading(bool value) {

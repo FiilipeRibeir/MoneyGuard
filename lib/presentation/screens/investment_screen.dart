@@ -110,6 +110,17 @@ class InvestmentScreen extends StatelessWidget {
                                       subtitle: Text(
                                         'Quantidade: ${investment.quantity} | Preço Médio: R\$ ${investment.averagePrice.toStringAsFixed(2)}',
                                       ),
+                                      leading: IconButton(
+                                        icon: Icon(
+                                          Icons.delete_outline,
+                                          color: Colors.redAccent,
+                                        ),
+                                        onPressed: () {
+                                          provider.deleteInvestment(
+                                            investment.id,
+                                          );
+                                        },
+                                      ),
                                       trailing: Column(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
