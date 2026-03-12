@@ -67,7 +67,7 @@ class HomeScreen extends StatelessWidget {
                   icon: const Icon(Icons.today),
                   onPressed: () => provider.changeMonth(DateTime.now()),
                 ),
-                OutlinedButton.icon(
+                IconButton(
                   onPressed: provider.isLoading
                       ? null
                       : () {
@@ -76,7 +76,26 @@ class HomeScreen extends StatelessWidget {
                               .importTransactionsFromBank();
                         },
                   icon: const Icon(Icons.sync),
-                  label: const Text('Sincronizar'),
+                ),
+                //deleta all transactions (para testes)
+                IconButton(
+                  onPressed: provider.deleteAllTransactions,
+                  icon: const Icon(Icons.delete),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton.icon(
+                  onPressed: provider.isLoading
+                      ? null
+                      : () {
+                          context.read<TransactionProvider>().importFromCsv();
+                        },
+                  icon: const Icon(Icons.file_present),
+                  label: const Text('Nubank'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple.shade700,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                  ),
                 ),
               ],
             ),

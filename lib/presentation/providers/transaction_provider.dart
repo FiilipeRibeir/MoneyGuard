@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:moneyguard/data/services/bank_transaction_service.dart';
+import 'package:moneyguard/data/services/lib/data/services/csv_import_service.dart';
 import '../../domain/entities/transaction.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -155,6 +156,48 @@ class TransactionProvider extends ChangeNotifier {
     await loadTransactions();
   }
 
+  Future<void> importFromCsv() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final newTransactions = await CsvImportService.importNubankCsv();
+
+      if (newTransactions.isNotEmpty) {
+        int adicionados = 0;
+        int pulados = 0;
+
+        for (var tx in newTransactions) {
+          // AQUI ESTÁ A TRAVA:
+          // Verifica se já existe uma transação com o MESMO TÍTULO, VALOR e DATA
+          // (Já que o Uuid() gera um id novo toda vez, temos que comparar os dados reais)
+          bool jaExiste = _transactions.any(
+            (t) =>
+                t.title == tx.title &&
+                t.amount == tx.amount &&
+                t.date.day == tx.date.day &&
+                t.date.month == tx.date.month,
+          );
+
+          if (!jaExiste) {
+            await _repository.addTransaction(tx);
+            adicionados++;
+          } else {
+            pulados++;
+          }
+        }
+
+        await loadTransactions();
+        print(
+          "🚀 Processo finalizado: $adicionados novos, $pulados ignorados.",
+        );
+      }
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> importTransactionsFromBank() async {
     _setLoading(true);
     try {
@@ -171,6 +214,18 @@ class TransactionProvider extends ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  }
+
+  Future<void> deleteAllTransactions() async {
+    // 1. Limpa no repositório (Hive)
+    await _repository.deleteAllTransactions();
+
+    // 2. Atualiza a lista local e notifica a UI
+    _transactions.clear();
+    await loadTransactions();
+    notifyListeners();
+
+    print("🧹 Quartel limpo! Todas as transações foram removidas.");
   }
 
   void _setLoading(bool value) {

@@ -23,6 +23,12 @@ class TransactionRepository {
     return box.values.map((model) => model.toEntity()).toList();
   }
 
+  //delete all transactions (para testes)
+  Future<void> deleteAllTransactions() async {
+    final box = await _openBox();
+    await box.clear();
+  }
+
   // Eliminar
   Future<void> deleteTransaction(String id) async {
     final box = await _openBox();
