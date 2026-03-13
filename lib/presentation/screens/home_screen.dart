@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:moneyguard/domain/entities/transaction.dart';
 import 'package:moneyguard/presentation/widgets/home_widgets/category_chart.dart';
 import 'package:moneyguard/presentation/widgets/home_widgets/month_selector.dart';
-import 'package:moneyguard/presentation/widgets/home_widgets/floating_action_button.dart';
 import 'package:provider/provider.dart';
 import '../providers/transaction_provider.dart';
 
@@ -32,7 +31,7 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   const Text('Saldo Atual'),
                   Text(
-                    currencyFormat.format(provider.filteredTotal),
+                    currencyFormat.format(provider.totalAccountBalance),
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -66,16 +65,6 @@ class HomeScreen extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.today),
                   onPressed: () => provider.changeMonth(DateTime.now()),
-                ),
-                IconButton(
-                  onPressed: provider.isLoading
-                      ? null
-                      : () {
-                          context
-                              .read<TransactionProvider>()
-                              .importTransactionsFromBank();
-                        },
-                  icon: const Icon(Icons.sync),
                 ),
                 //deleta all transactions (para testes)
                 IconButton(
@@ -169,13 +158,6 @@ class HomeScreen extends StatelessWidget {
                     ),
             ),
           ],
-        ),
-
-        // Botão flutuando SOBRE a Home
-        const Positioned(
-          right: 16,
-          bottom: 16,
-          child: CustomFloatingActionButton(isInvestment: false),
         ),
       ],
     );

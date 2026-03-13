@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:moneyguard/data/services/bank_transaction_service.dart';
-import 'package:moneyguard/data/services/lib/data/services/csv_import_service.dart';
+import 'package:moneyguard/data/services/csv_import_service.dart';
 import '../../domain/entities/transaction.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -83,6 +82,29 @@ class TransactionProvider extends ChangeNotifier {
       }
     }
     return total;
+  }
+
+  // Calcula o saldo que veio dos meses anteriores
+  double get carryoverBalance {
+    // Primeiro dia do mês atual selecionado
+    final firstDayOfCurrentMonth = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      1,
+    );
+
+    return _transactions
+        .where((tx) => tx.date.isBefore(firstDayOfCurrentMonth))
+        .fold<double>(0, (sum, tx) {
+          return tx.type == TransactionType.income
+              ? sum + tx.amount
+              : sum - tx.amount;
+        });
+  }
+
+  // O Saldo Total exibido (Saldo Anterior + Saldo do Mês)
+  double get totalAccountBalance {
+    return carryoverBalance + filteredTotal;
   }
 
   // Saldo Total (Lógica de Negócio Simples)
@@ -195,24 +217,6 @@ class TransactionProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
-    }
-  }
-
-  Future<void> importTransactionsFromBank() async {
-    _setLoading(true);
-    try {
-      final externalTransactions =
-          await BankTransactionService.fetchExternalTransactions();
-
-      for (var tx in externalTransactions) {
-        await _repository.addTransaction(tx);
-      }
-
-      await loadTransactions();
-    } catch (e) {
-      // Tratar erros de importação, se necessário
-    } finally {
-      _setLoading(false);
     }
   }
 

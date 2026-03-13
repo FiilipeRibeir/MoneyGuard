@@ -60,17 +60,6 @@ class InvestmentScreen extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        OutlinedButton.icon(
-                          onPressed: provider.isLoading
-                              ? null
-                              : () {
-                                  context
-                                      .read<InvestmentProvider>()
-                                      .importInvestments();
-                                },
-                          icon: const Icon(Icons.sync),
-                          label: const Text('Sincronizar'),
-                        ),
                       ],
                     ),
                   ),

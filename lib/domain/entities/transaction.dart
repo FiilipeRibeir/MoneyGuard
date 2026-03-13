@@ -8,7 +8,10 @@ enum CategoryType {
   Lazer,
   Saude,
   Educacao,
-  Salario,
+  Rendimentos, // Para seus proventos de NuInvest
+  Investimentos, // Para o dinheiro que você guarda (RDB)
+  Moradia,
+  Compras,
   Outros,
 }
 
